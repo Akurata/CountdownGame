@@ -1,0 +1,57 @@
+<html>
+  <head>
+    <title>Countdown Algo Test</title>
+    <link rel="stylesheet" href="./treant-js-master/Treant.css">
+    <style>
+      .container {
+        margin: 5rem;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+
+      }
+      .panel {
+        flex: 1;
+      }
+      .infoPanel {
+        margin-top: 0px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      label {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="panel" id="treeContent">
+      </div>
+      <div class="panel infoPanel">
+        <label>
+          Selected Numbers:
+          <input id="selectedNums" type="text"/>
+        </label>
+
+        <label>
+          Goal:
+          <input id="goalInput" type="text"/>
+        </label>
+
+        <button type="button" onClick="runBoard()">Go</button>
+
+        <hr/>
+
+        <div>
+          Status: <span id="boardStatus"></span>
+        </div>
+      </div>
+    </div>
+    <script src="./treant-js-master/vendor/raphael.js"></script>
+    <script src="./treant-js-master/Treant.js"></script>
+    <script src="./index.js"></script>
+  </body>
+</html>
