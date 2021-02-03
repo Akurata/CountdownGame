@@ -36,6 +36,8 @@ class Digit {
   left = null;
   right = null;
 
+  comprising = [];
+
   constructor(value, operator, left, right) {
     this.id = digitidentity++;
     this.value = value;
@@ -43,11 +45,18 @@ class Digit {
     this.left = left;
     this.right = right;
 
-    // Handle recurrsion errors
-    // if(this.id > 100000) {
-    //   throw 'MaxDigits';
-    // }
+    // Add the value of itself to its comprising list (base case)
+    this.comprising.push(this.id);
+
+    if(this.left) {
+      this.comprising = [ ...this.comprising, ...this.left.comprising];
+    }
+
+    if(this.right) {
+      this.comprising = [ ...this.comprising, ...this.right.comprising];
+    }
   }
+
 }
 
 
@@ -57,7 +66,7 @@ class Board {
   goal = null;
 
   // Flag to help keep track of the algo status
-  goalDigit = null;
+  rootNode = null;
 
   constructor(pool, goal) {
     // Set the target goal
@@ -80,7 +89,7 @@ class Board {
               this.process(left, right);
 
               // If the goal has not been met
-              if(this.goalDigit) {
+              if(this.rootNode) {
                 break leftIterator;
               }
 
@@ -95,21 +104,21 @@ class Board {
   hasAssociation(parent, child) {
     // If parent is child
     if(parent && child) {
-      if(parent.id === child.id) {
+      if(parent.comprising.includes(child.id)) {
         return true;
       }else {
         // If the left side exists
         if(child.left) {
           // Check to see if this side matches the test child
           return this.hasAssociation(parent, child.left) ||
-            this.hasAssociation(child.left, parent);
+                 this.hasAssociation(child.left, parent);
         }
 
         // If the right side exists
         if(child.right) {
           // Check to see if this side matches the test child
           return this.hasAssociation(parent, child.right) ||
-            this.hasAssociation(child.right, parent);
+                 this.hasAssociation(child.right, parent);
         }
       }
     }
@@ -151,7 +160,7 @@ class Board {
 
         // Check if goal is found
         if(value === this.goal) {
-          this.goalDigit = this.digits[this.digits.length - 1];
+          this.rootNode = this.digits[this.digits.length - 1];
         }
       }
 
@@ -201,7 +210,7 @@ class Board {
           }
         }
       },
-      nodeStructure: makeNode(this.goalDigit)
+      nodeStructure: makeNode(this.rootNode)
     };
 
   }
