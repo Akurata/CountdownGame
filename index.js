@@ -24,6 +24,8 @@ let board;
 let boardTree;
 let tree;
 
+let sequence = [];
+
 let pool_ele;
 let goal_ele;
 
@@ -216,7 +218,6 @@ function runBoard() {
 
     boardTree = board.toTreeMarkup();
     tree = new Treant(boardTree);
-    console.log(boardTree);
   }catch(t) {
     if(t === 'MaxDigits') {
         statusMsg = 'Maxed out allowed digits.';
@@ -224,17 +225,56 @@ function runBoard() {
   }
 
   document.getElementById('boardStatus').innerHTML = statusMsg;
-  dfs(boardTree.nodeStructure)
+  document.getElementById('boardIterations').innerHTML = board.digits.length.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  dfs(boardTree.nodeStructure);
+  console.log(sequence.reverse());
+
+  consumeToText(sequence);
 }
 
 
 function dfs(node) {
   if(node.children.length > 0) {
-    for(let child of node.children) {
+    for(let child of node.children.reverse()) {
       dfs(child);
     }
   }
-  console.log(node.text.name);
+  sequence.push(node.text.name);
+}
+
+function consumeToText(seq) {
+  const order = ['left', 'right', 'op', 'value'];
+  const goal = seq.shift(); // First value is target goal
+
+  function buildExpr(left, right, op) {
+    switch(op) {
+      case 'ADD':
+        op = '+';
+        break;
+      case 'SUB':
+        op = '-';
+        break;
+      case 'MUL':
+        op = '*';
+        break;
+      case 'DIV':
+        op = '/';
+        break;
+      default:
+        break;
+    }
+
+    return `(${left} ${op} ${right})`
+  }
+
+  while(seq.length > 0) {
+    let current = {};
+    for(let task of order)  {
+      current[task] = seq.shift();
+    }
+    console.log(current);
+  }
+
 }
 
 // Init
