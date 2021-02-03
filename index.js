@@ -84,16 +84,13 @@ class Board {
 
           // Don't process a digit against itself
           if(left.id !== right.id) {
-            // Don't process a digist against any associative digit
-            if(!this.hasAssociation(left, right) && !this.hasAssociation(right, left)) {
-              this.process(left, right);
+            this.process(left, right);
 
-              // If the goal has not been met
-              if(this.rootNode) {
-                break leftIterator;
-              }
-
+            // If the goal has not been met
+            if(this.rootNode) {
+              break leftIterator;
             }
+
           }
 
       }
@@ -102,28 +99,14 @@ class Board {
   }
 
   hasAssociation(parent, child) {
-    // If parent is child
-    if(parent && child) {
-      if(parent.comprising.includes(child.id)) {
-        return true;
-      }else {
-        // If the left side exists
-        if(child.left) {
-          // Check to see if this side matches the test child
-          return this.hasAssociation(parent, child.left) ||
-                 this.hasAssociation(child.left, parent);
-        }
-
-        // If the right side exists
-        if(child.right) {
-          // Check to see if this side matches the test child
-          return this.hasAssociation(parent, child.right) ||
-                 this.hasAssociation(child.right, parent);
+    // Idenfify if either nodes comprising list contains a match
+    for(let parentComp of parent.comprising) {
+      for(let childComp of child.comprising) {
+        if(parentComp === childComp) {
+          return true;
         }
       }
     }
-
-    // Default false
     return false;
   }
 
@@ -155,13 +138,15 @@ class Board {
 
       // Only accept integers
       if(Number.isInteger(value) && value > 0) { // TODO: Testing without negatives
-        // console.log(`${left.value} ${op} ${right.value} = ${value}`);
-        this.createDigit(value, op, left, right);
-
-        // Check if goal is found
-        if(value === this.goal) {
-          this.rootNode = this.digits[this.digits.length - 1];
+        // Don't process a digist against any associative digit
+        if(!this.hasAssociation(left, right) && !this.hasAssociation(right, left)) {
+          this.createDigit(value, op, left, right);
+          // Check if goal is found
+          if(value === this.goal) {
+            this.rootNode = this.digits[this.digits.length - 1];
+          }
         }
+
       }
 
     }
